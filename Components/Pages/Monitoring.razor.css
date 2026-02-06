@@ -1,0 +1,17 @@
+.alert-ok {
+  color: #047857;
+  background-color: rgba(16, 185, 129, 0.12);
+  font-weight: 600;
+}
+
+.alert-warning {
+  color: #b45309;
+  background-color: rgba(245, 158, 11, 0.14);
+  font-weight: 600;
+}
+
+.alert-critical {
+  color: #be123c;
+  background-color: rgba(244, 63, 94, 0.14);
+  font-weight: 600;
+}

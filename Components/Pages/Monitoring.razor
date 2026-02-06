@@ -59,10 +59,12 @@
                                 <tbody class="divide-y divide-slate-200">
                                     @foreach (var row in card.Rows)
                                     {
+                                        var alertIndex = GetAlertColumnIndex(card.Columns);
+                                        var rowAlertClass = alertIndex >= 0 ? GetAlertLevelClass(row[alertIndex]) : string.Empty;
                                         <tr class="hover:bg-slate-50/80">
                                             @for (var i = 0; i < row.Count; i++)
                                             {
-                                                <td class="px-2 py-2 text-center">@FormatCellValue(row[i])</td>
+                                                <td class="px-2 py-2 text-center @rowAlertClass">@FormatCellValue(row[i])</td>
                                             }
                                         </tr>
                                     }

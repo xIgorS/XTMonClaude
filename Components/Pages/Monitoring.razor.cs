@@ -185,6 +185,35 @@ public partial class Monitoring : ComponentBase
         return negative ? "-" + builder : builder.ToString();
     }
 
+    private static string GetAlertLevelClass(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
+
+        return value.Trim().ToUpperInvariant() switch
+        {
+            "OK" => "alert-ok",
+            "WARNING" => "alert-warning",
+            "CRITICAL" => "alert-critical",
+            _ => string.Empty
+        };
+    }
+
+    private static int GetAlertColumnIndex(IReadOnlyList<string> columns)
+    {
+        for (var i = 0; i < columns.Count; i++)
+        {
+            if (columns[i].Equals("AlertLevel", StringComparison.OrdinalIgnoreCase))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     private sealed record DbCard(
         string Name,
         IReadOnlyList<string> Columns,
