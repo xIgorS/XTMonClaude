@@ -1,0 +1,89 @@
+@page "/monitoring"
+@rendermode InteractiveServer
+
+<PageTitle>Monitoring</PageTitle>
+
+<div class="space-y-6">
+    <div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+            <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Database monitoring</p>
+            <h1 class="text-3xl font-semibold text-slate-900">LOG_FI_ALMT</h1>
+            <p class="muted mt-1">Stored procedure: @ProcedureName</p>
+        </div>
+        <button class="primary-button" @onclick="ReloadAsync" disabled="@isLoading">
+            @(isLoading ? "Refreshing..." : "Refresh data")
+        </button>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="stat-card">
+            <p class="stat-label">Last refresh</p>
+            <p class="stat-value">@(lastRefresh?.ToString("yyyy-MM-dd HH:mm:ss") ?? "Not loaded")</p>
+            <p class="muted mt-1">Local time</p>
+        </div>
+        <div class="stat-card">
+            <p class="stat-label">Rows</p>
+            <p class="stat-value">@(result?.Rows.Count ?? 0)</p>
+            <p class="muted mt-1">From stored procedure</p>
+        </div>
+        <div class="stat-card">
+            <p class="stat-label">Columns</p>
+            <p class="stat-value">@(result?.Columns.Count ?? 0)</p>
+            <p class="muted mt-1">Detected fields</p>
+        </div>
+        <div class="stat-card">
+            <p class="stat-label">Status</p>
+            <p class="stat-value">@(string.IsNullOrWhiteSpace(loadError) ? "Ready" : "Error")</p>
+            <p class="muted mt-1">Connectivity</p>
+        </div>
+    </div>
+
+    <div class="space-y-4">
+        @if (isLoading)
+        {
+            <div class="surface">
+                <p class="muted">Loading data from SQL Server...</p>
+            </div>
+        }
+        else if (!string.IsNullOrWhiteSpace(loadError))
+        {
+            <div class="surface border-rose-200 bg-rose-50/70">
+                <p class="text-sm font-semibold text-rose-700">Failed to load monitoring data.</p>
+                <p class="mt-2 text-sm text-rose-700">@loadError</p>
+            </div>
+        }
+        else if (result is null || result.Rows.Count == 0)
+        {
+            <div class="surface">
+                <p class="muted">No rows returned from the stored procedure.</p>
+            </div>
+        }
+        else
+        {
+            <div class="surface overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-700">
+                    <thead class="text-xs uppercase tracking-[0.18em] text-slate-500">
+                        <tr>
+                            @foreach (var column in result.Columns)
+                            {
+                                <th class="px-3 py-2">@column</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        @foreach (var row in result.Rows)
+                        {
+                            <tr class="hover:bg-slate-50/80">
+                                @for (var i = 0; i < row.Count; i++)
+                                {
+                                    <td class="px-3 py-3">@(row[i] ?? "-")</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+

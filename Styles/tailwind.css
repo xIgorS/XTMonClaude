@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  body {
+    font-family: "Avenir Next", "Gill Sans", "Trebuchet MS", sans-serif;
+    background-image: radial-gradient(circle at top, rgba(15, 118, 110, 0.12), transparent 55%),
+      radial-gradient(circle at 80% 20%, rgba(251, 146, 60, 0.15), transparent 45%),
+      linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  }
+}
+
+@layer components {
+  .app-shell {
+    @apply flex min-h-screen w-full gap-6 px-6 py-6;
+  }
+
+  .sidebar-card {
+    @apply rounded-3xl bg-white/80 backdrop-blur border border-slate-200 p-5 shadow-sm;
+  }
+
+  .nav-link {
+    @apply flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white hover:text-slate-900;
+  }
+
+  .nav-link-active {
+    @apply bg-white text-slate-900 shadow-sm ring-1 ring-slate-200;
+  }
+
+  .primary-button {
+    @apply inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .surface {
+    @apply rounded-3xl bg-white/75 backdrop-blur border border-slate-200 p-6 shadow-sm;
+  }
+
+  .stat-card {
+    @apply rounded-2xl bg-white/70 border border-slate-200 p-5 shadow-sm;
+  }
+
+  .stat-label {
+    @apply text-xs uppercase tracking-[0.2em] text-slate-500;
+  }
+
+  .stat-value {
+    @apply mt-2 text-2xl font-semibold text-slate-900;
+  }
+
+  .muted {
+    @apply text-sm text-slate-600;
+  }
+}
