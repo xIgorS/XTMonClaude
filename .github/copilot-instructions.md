@@ -1,106 +1,158 @@
-<!-- Use this file to provide workspace-specific custom instructions to Copilot. For more details, visit https://code.visualstudio.com/docs/copilot/copilot-customization#_use-a-githubcopilotinstructionsmd-file -->
-- [x] Verify that the copilot-instructions.md file in the .github directory is created.
+# XTMon Project Instructions
 
-- [x] Clarify Project Requirements
-	<!-- Ask for project type, language, and frameworks if not specified. Skip if already provided. -->
+## Project Overview
+XTMon is a Blazor Web App (Interactive Server) for monitoring SQL Server database metrics and replaying failed flows.
 
-- [x] Scaffold the Project
-	<!--
-	Ensure that the previous step has been marked as completed.
-	Call project setup tool with projectType parameter.
-	Run scaffolding command to create project files and folders.
-	Use '.' as the working directory.
-	If no appropriate projectType is available, search documentation using available tools.
-	Otherwise, create the project structure manually using available file creation tools.
-	-->
+**Technology Stack:**
+- **Framework**: .NET 10.0
+- **UI**: Blazor Server with Interactive Server mode
+- **Database**: SQL Server via Microsoft.Data.SqlClient
+- **Styling**: Tailwind CSS (custom build process)
+- **Architecture**: Repository pattern with options-based configuration
 
-- [x] Customize the Project
-	<!--
-	Verify that all previous steps have been completed successfully and you have marked the step as completed.
-	Develop a plan to modify codebase according to user requirements.
-	Apply modifications using appropriate tools and user-provided references.
-	Skip this step for "Hello World" projects.
-	-->
+## Project Structure
+- **Components/**: Blazor components with code-behind pattern
+  - **Pages/**: Routable page components (Monitoring, ReplayFlows, Home, Error, NotFound)
+  - **Layout/**: Layout components (MainLayout, NavMenu, ReconnectModal)
+- **Data/**: Data access layer (repositories, connection factory)
+- **Models/**: Domain models and DTOs
+- **Options/**: Configuration option classes mapped from appsettings
+- **Styles/**: Tailwind CSS source files
+- **wwwroot/**: Static web assets and compiled CSS
 
-- [x] Install Required Extensions
-	<!-- ONLY install extensions provided mentioned in the get_project_setup_info. Skip this step otherwise and mark as completed. -->
+## Development Guidelines
 
-- [x] Compile the Project
-	<!--
-	Verify that all previous steps have been completed.
-	Install any missing dependencies.
-	Run diagnostics and resolve any issues.
-	Check for markdown files in project folder for relevant instructions on how to do this.
-	-->
+### Code Organization
+- Use **code-behind pattern** for all Razor components (`.razor.cs` files)
+- Keep component logic separate from markup
+- Use `sealed` classes for components and services where inheritance isn't needed
+- Enable nullable reference types (`<Nullable>enable</Nullable>`)
 
-- [x] Create and Run Task
-	<!--
-	Verify that all previous steps have been completed.
-	Check https://code.visualstudio.com/docs/debugtest/tasks to determine if the project needs a task. If so, use the create_and_run_task to create and launch a task based on package.json, README.md, and project structure.
-	Skip this step otherwise.
-	 -->
+### Data Access
+- **Always use async/await** for database operations
+- Use `DbMonitoringRepository` for all SQL Server interactions
+- Never create SQL connections directly; use `SqlConnectionFactory`
+- All stored procedures configured in `appsettings.json` Options sections
+- Set appropriate `CommandTimeout` from configuration options
+- Handle `DbNull` values explicitly when reading data
+- Always pass `CancellationToken` to async database methods
 
-- [ ] Launch the Project
-	<!--
-	Verify that all previous steps have been completed.
-	Prompt user for debug mode, launch only if confirmed.
-	 -->
+### Configuration
+- Database connection strings in `ConnectionStrings` section
+- Feature-specific settings in dedicated Options classes:
+  - `MonitoringOptions` for monitoring features
+  - `ReplayFlowsOptions` for replay flows features
+- Register options using `builder.Services.Configure<T>()` pattern
+- Inject options via `IOptions<T>` interface
 
-- [ ] Ensure Documentation is Complete
-	<!--
-	Verify that all previous steps have been completed.
-	Verify that README.md and the copilot-instructions.md file in the .github directory exists and contains current project information.
-	Clean up the copilot-instructions.md file in the .github directory by removing all HTML comments.
-	 -->
+### Dependency Injection
+- `SqlConnectionFactory`: Singleton (thread-safe, lightweight)
+- `DbMonitoringRepository`: Scoped (per-request lifetime)
+- Options: Registered via `Configure<T>()` method
 
-<!--
-## Execution Guidelines
-PROGRESS TRACKING:
-- If any tools are available to manage the above todo list, use it to track progress through this checklist.
-- After completing each step, mark it complete and add a summary.
-- Read current todo list status before starting each new step.
+### Component Development
+- Components implement `ComponentBase`
+- Use `[Inject]` attribute for dependency injection
+- Initialize data in `OnInitializedAsync()` override
+- Use `StateHasChanged()` when updating UI from async operations
+- Handle loading states and errors gracefully
 
-COMMUNICATION RULES:
-- Avoid verbose explanations or printing full command outputs.
-- If a step is skipped, state that briefly (e.g. "No extensions needed").
-- Do not explain project structure unless asked.
-- Keep explanations concise and focused.
+### Styling
+- Use Tailwind CSS utility classes
+- Custom styles in component-specific `.razor.css` files (CSS isolation)
+- Build CSS bundle: `npm run build:css`
+- Development watch mode: `npm run watch:css`
+- Never write inline styles; prefer Tailwind utilities
 
-DEVELOPMENT RULES:
-- Use '.' as the working directory unless user specifies otherwise.
-- Avoid adding media or external links unless explicitly requested.
-- Use placeholders only with a note that they should be replaced.
-- Use VS Code API tool only for VS Code extension projects.
-- Once the project is created, it is already opened in Visual Studio Code—do not suggest commands to open this project in Visual Studio again.
-- If the project setup information has additional rules, follow them strictly.
+### Error Handling
+- Catch exceptions in component methods
+- Display user-friendly error messages
+- Use exception handler middleware for unhandled exceptions
+- Custom 404 page at `/not-found` route
 
-FOLDER CREATION RULES:
-- Always use the current directory as the project root.
-- If you are running any terminal commands, use the '.' argument to ensure that the current working directory is used ALWAYS.
-- Do not create a new folder unless the user explicitly requests it besides a .vscode folder for a tasks.json file.
-- If any of the scaffolding commands mention that the folder name is not correct, let the user know to create a new folder with the correct name and then reopen it again in vscode.
+### Security
+- **Never hardcode credentials** - always use appsettings
+- Use parameterized stored procedures (no dynamic SQL)
+- Connection strings in `appsettings.Development.json` for local dev
+- Enable HSTS in production
+- Use antiforgery protection
 
-EXTENSION INSTALLATION RULES:
-- Only install extension specified by the get_project_setup_info tool. DO NOT INSTALL any other extensions.
+## Common Patterns
 
-PROJECT CONTENT RULES:
-- If the user has not specified project details, assume they want a "Hello World" project as a starting point.
-- Avoid adding links of any type (URLs, files, folders, etc.) or integrations that are not explicitly required.
-- Avoid generating images, videos, or any other media files unless explicitly requested.
-- If you need to use any media assets as placeholders, let the user know that these are placeholders and should be replaced with the actual assets later.
-- Ensure all generated components serve a clear purpose within the user's requested workflow.
-- If a feature is assumed but not confirmed, prompt the user for clarification before including it.
-- If you are working on a VS Code extension, use the VS Code API tool with a query to find relevant VS Code API references and samples related to that query.
+### Reading from Database
+```csharp
+using var connection = _connectionFactory.CreateConnection();
+using var command = connection.CreateCommand();
+command.CommandText = _options.StoredProcedureName;
+command.CommandType = CommandType.StoredProcedure;
+command.CommandTimeout = _options.CommandTimeoutSeconds;
 
-TASK COMPLETION RULES:
-- Your task is complete when:
-  - Project is successfully scaffolded and compiled without errors
-  - copilot-instructions.md file in the .github directory exists in the project
-  - README.md file exists and is up to date
-  - User is provided with clear instructions to debug/launch the project
+await connection.OpenAsync(cancellationToken);
+using var reader = await command.ExecuteReaderAsync(cancellationToken);
+```
 
-Before starting a new task in the above plan, update progress in the plan.
--->
-- Work through each checklist item systematically.
-- Keep communication concise and focused.
-- Follow development best practices.
+### Adding Configuration Options
+1. Create class in `Options/` folder with `SectionName` constant
+2. Add properties matching appsettings structure
+3. Register in Program.cs: `builder.Services.Configure<YourOptions>(builder.Configuration.GetSection(YourOptions.SectionName))`
+4. Inject via `IOptions<YourOptions>`
+
+### Component with Data Loading
+```csharp
+private bool isLoading;
+private string? loadError;
+
+protected override async Task OnInitializedAsync()
+{
+    await LoadDataAsync();
+}
+
+private async Task LoadDataAsync()
+{
+    isLoading = true;
+    loadError = null;
+    try
+    {
+        // Load data
+    }
+    catch (Exception ex)
+    {
+        loadError = ex.Message;
+    }
+    finally
+    {
+        isLoading = false;
+        StateHasChanged();
+    }
+}
+```
+
+## Build and Run
+
+**Initial Setup:**
+```bash
+npm install
+npm run build:css
+dotnet run
+```
+
+**Development Workflow:**
+```bash
+# Terminal 1: Run application
+dotnet run
+
+# Terminal 2: Watch CSS changes
+npm run watch:css
+```
+
+## Configuration Files
+- `appsettings.json`: Production/default settings
+- `appsettings.Development.json`: Local development overrides (gitignored)
+- Update SQL connection string in Development file with your credentials
+
+## Code Style
+- Use `var` for local variables when type is obvious
+- PascalCase for public members, camelCase for private fields with `_` prefix
+- Prefer `readonly` fields where possible
+- Use collection expressions `[]` where applicable (.NET 10)
+- Keep methods focused and single-purpose
