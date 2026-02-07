@@ -134,6 +134,7 @@ public partial class ReplayFlows : ComponentBase
             var results = await Repository.ReplayFlowsAsync(submissionRows, CancellationToken.None);
             replayResults.Clear();
             replayResults.AddRange(results);
+            rows.RemoveAll(row => row.IsSelected);
             SetStatus($"Submitted {submissionRows.Count} row(s) for replay.", isError: false);
         }
         catch (Exception ex)
