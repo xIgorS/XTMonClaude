@@ -22,6 +22,7 @@ public partial class ReplayFlows : ComponentBase
     private DbMonitoringRepository Repository { get; set; } = default!;
 
     private readonly List<ReplayFlowGridRow> rows = new();
+    private readonly List<ReplayFlowResultRow> replayResults = new();
     private string pnlDateInput = string.Empty;
     private string? pnlDateError;
     private bool isLoading;
@@ -43,12 +44,20 @@ public partial class ReplayFlows : ComponentBase
             {
                 pnlDateError = null;
             }
+
+            if (!string.IsNullOrWhiteSpace(statusMessage))
+            {
+                statusMessage = null;
+                statusIsError = false;
+            }
         }
     }
 
     private int SelectedRowsCount => rows.Count(row => row.IsSelected);
 
     private bool CanSubmit => !isSubmitting && !isLoading && SelectedRowsCount > 0;
+
+    private bool CanSelectAll => !isSubmitting && !isLoading && rows.Count > 0;
 
     private async Task ReloadAsync()
     {
@@ -60,12 +69,14 @@ public partial class ReplayFlows : ComponentBase
         isLoading = true;
         loadError = null;
         statusMessage = null;
+        statusIsError = false;
 
         try
         {
             var data = await Repository.GetFailedFlowsAsync(pnlDate, CancellationToken.None);
             rows.Clear();
             rows.AddRange(data.Select(row => new ReplayFlowGridRow(row)));
+            replayResults.Clear();
             hasLoaded = true;
             lastRefresh = DateTimeOffset.Now;
             lastPnlDate = pnlDate;
@@ -120,9 +131,10 @@ public partial class ReplayFlows : ComponentBase
 
         try
         {
-            await Repository.ReplayFlowsAsync(submissionRows, CancellationToken.None);
+            var results = await Repository.ReplayFlowsAsync(submissionRows, CancellationToken.None);
+            replayResults.Clear();
+            replayResults.AddRange(results);
             SetStatus($"Submitted {submissionRows.Count} row(s) for replay.", isError: false);
-            await ReloadAsync();
         }
         catch (Exception ex)
         {
@@ -168,11 +180,26 @@ public partial class ReplayFlows : ComponentBase
         }
     }
 
+    private void SelectAll()
+    {
+        if (!CanSelectAll)
+        {
+            return;
+        }
+
+        foreach (var row in rows)
+        {
+            row.IsSelected = true;
+        }
+    }
+
     private void NormalizePnlDateInput()
     {
         if (DateOnly.TryParseExact(pnlDateInput, AcceptedDateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var pnlDate))
         {
             pnlDateInput = pnlDate.ToString(DisplayDateFormat, CultureInfo.InvariantCulture);
+            statusMessage = null;
+            statusIsError = false;
         }
     }
 

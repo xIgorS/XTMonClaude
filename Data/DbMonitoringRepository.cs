@@ -160,11 +160,11 @@ public sealed class DbMonitoringRepository
         return Convert.ToInt32(value) != 0;
     }
 
-    public async Task ReplayFlowsAsync(IReadOnlyCollection<ReplayFlowSubmissionRow> rows, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<ReplayFlowResultRow>> ReplayFlowsAsync(IReadOnlyCollection<ReplayFlowSubmissionRow> rows, CancellationToken cancellationToken)
     {
         if (rows.Count == 0)
         {
-            return;
+            return Array.Empty<ReplayFlowResultRow>();
         }
 
         using var connection = _connectionFactory.CreateConnection();
@@ -200,6 +200,50 @@ public sealed class DbMonitoringRepository
         command.Parameters.Add(parameter);
 
         await connection.OpenAsync(cancellationToken);
-        await command.ExecuteNonQueryAsync(cancellationToken);
+        using var reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        var ordinals = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        for (var i = 0; i < reader.FieldCount; i++)
+        {
+            ordinals[reader.GetName(i)] = i;
+        }
+
+        var requiredColumns = new[]
+        {
+            "FlowId",
+            "FlowIdDerivedFrom",
+            "PnlDate",
+            "WithBackdated",
+            "SkipCoreProcess",
+            "Droptabletpm"
+        };
+
+        var missingColumns = requiredColumns.Where(column => !ordinals.ContainsKey(column)).ToList();
+        if (missingColumns.Count > 0)
+        {
+            throw new InvalidOperationException(
+                $"Replay flows result is missing column(s): {string.Join(", ", missingColumns)}.");
+        }
+
+        var flowIdIndex = ordinals["FlowId"];
+        var flowIdDerivedFromIndex = ordinals["FlowIdDerivedFrom"];
+        var pnlDateIndex = ordinals["PnlDate"];
+        var withBackdatedIndex = ordinals["WithBackdated"];
+        var skipCoreProcessIndex = ordinals["SkipCoreProcess"];
+        var droptabletpmIndex = ordinals["Droptabletpm"];
+
+        var results = new List<ReplayFlowResultRow>();
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            results.Add(new ReplayFlowResultRow(
+                reader.GetInt64(flowIdDerivedFromIndex),
+                reader.GetInt64(flowIdIndex),
+                DateOnly.FromDateTime(reader.GetDateTime(pnlDateIndex)),
+                ReadBoolean(reader, withBackdatedIndex),
+                ReadBoolean(reader, skipCoreProcessIndex),
+                ReadBoolean(reader, droptabletpmIndex)));
+        }
+
+        return results;
     }
 }

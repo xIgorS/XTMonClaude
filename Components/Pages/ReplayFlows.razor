@@ -14,6 +14,9 @@
             <button class="primary-button" @onclick="ReloadAsync" disabled="@(!IsPnlDateValid() || isLoading || isSubmitting)">
                 @(isLoading ? "Refreshing..." : "Refresh")
             </button>
+            <button class="primary-button" @onclick="SelectAll" disabled="@(!CanSelectAll)">
+                Select All
+            </button>
             <button class="primary-button" @onclick="SubmitAsync" disabled="@(!CanSubmit)">
                 @(isSubmitting ? "Submitting..." : "Submit selected")
             </button>
@@ -155,4 +158,44 @@
             </div>
         }
     </div>
+
+    @if (replayResults.Count > 0)
+    {
+        <div class="surface">
+            <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Replay results</p>
+            <div class="db-grid__wrap">
+                <table class="db-grid">
+                    <thead>
+                        <tr>
+                            <th class="db-grid__head db-grid__cell--num">Flow Id</th>
+                            <th class="db-grid__head db-grid__cell--num">Derived From</th>
+                            <th class="db-grid__head db-grid__cell--text">Pnl Date</th>
+                            <th class="db-grid__head db-grid__cell--checkbox">With Backdated</th>
+                            <th class="db-grid__head db-grid__cell--checkbox">Skip Core Process</th>
+                            <th class="db-grid__head db-grid__cell--checkbox">Droptabletpm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var result in replayResults)
+                        {
+                            <tr class="db-grid__row">
+                                <td class="db-grid__cell db-grid__cell--num">@FormatNumber(result.FlowId)</td>
+                                <td class="db-grid__cell db-grid__cell--num">@FormatNumber(result.FlowIdDerivedFrom)</td>
+                                <td class="db-grid__cell db-grid__cell--text">@FormatDate(result.PnlDate)</td>
+                                <td class="db-grid__cell db-grid__cell--checkbox">
+                                    <input type="checkbox" class="replay-checkbox" checked="@result.WithBackdated" disabled />
+                                </td>
+                                <td class="db-grid__cell db-grid__cell--checkbox">
+                                    <input type="checkbox" class="replay-checkbox" checked="@result.SkipCoreProcess" disabled />
+                                </td>
+                                <td class="db-grid__cell db-grid__cell--checkbox">
+                                    <input type="checkbox" class="replay-checkbox" checked="@result.Droptabletpm" disabled />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
 </div>
