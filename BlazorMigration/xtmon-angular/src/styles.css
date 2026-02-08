@@ -1,0 +1,203 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        color-scheme: light;
+    }
+
+    body {
+        font-family: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        min-height: 100vh;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        font-family: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.025em;
+    }
+}
+
+@layer components {
+    .app-shell {
+        @apply flex min-h-screen w-full gap-6 p-6;
+    }
+
+    .sidebar-card {
+        @apply rounded-2xl bg-gradient-to-b from-slate-800/90 to-slate-900/90 backdrop-blur-xl border border-slate-700/50 p-6 shadow-2xl shadow-black/20;
+    }
+
+    .nav-link {
+        @apply flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-400 transition-all duration-200 hover:bg-slate-700/50 hover:text-white;
+    }
+
+    .nav-link-active {
+        @apply bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-white shadow-lg shadow-indigo-500/10 ring-1 ring-indigo-500/30;
+    }
+
+    .primary-button {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 transition-all duration-200 hover:from-indigo-600 hover:to-purple-700 hover:shadow-xl hover:shadow-indigo-500/40 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-lg;
+    }
+
+    .secondary-button {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl bg-slate-700/50 px-5 py-2.5 text-sm font-semibold text-slate-200 ring-1 ring-slate-600/50 transition-all duration-200 hover:bg-slate-600/50 hover:text-white disabled:cursor-not-allowed disabled:opacity-50;
+    }
+
+    .surface {
+        @apply rounded-2xl bg-gradient-to-b from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-slate-700/50 p-6 shadow-xl shadow-black/10;
+    }
+
+    .stat-card {
+        @apply rounded-xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/40 p-5 shadow-lg transition-all duration-300 hover:border-slate-600/50 hover:shadow-xl hover:-translate-y-0.5;
+    }
+
+    .stat-label {
+        @apply text-xs font-medium uppercase tracking-widest text-slate-500;
+    }
+
+    .stat-value {
+        @apply mt-2 text-2xl font-bold text-white;
+    }
+
+    .muted {
+        @apply text-sm text-slate-400;
+    }
+
+    /* Modern Data Grid Styles */
+    .db-grid__wrap {
+        @apply overflow-x-auto rounded-xl;
+    }
+
+    .db-grid {
+        @apply w-full border-collapse text-sm;
+    }
+
+    .db-grid__head {
+        @apply bg-slate-800/80 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-400 first:rounded-tl-lg last:rounded-tr-lg;
+    }
+
+    .db-grid__row {
+        @apply border-b border-slate-700/30 transition-colors duration-150 hover:bg-slate-700/30;
+    }
+
+    .db-grid__row:last-child {
+        @apply border-b-0;
+    }
+
+    .db-grid__cell {
+        @apply px-4 py-3 text-slate-300 whitespace-nowrap;
+    }
+
+    .db-grid__cell--text {
+        @apply text-left;
+    }
+
+    .db-grid__cell--num {
+        @apply text-right font-mono text-slate-200 tabular-nums;
+    }
+
+    .db-grid__cell--status {
+        @apply text-center;
+    }
+
+    .db-grid__cell--checkbox {
+        @apply text-center w-12;
+    }
+
+    /* Alert Level Styles with Glow Effects */
+    .alert-ok {
+        @apply bg-emerald-500/10 text-emerald-400;
+    }
+
+    .alert-ok .db-grid__cell--status {
+        @apply text-emerald-400 font-semibold;
+    }
+
+    .alert-warning {
+        @apply bg-amber-500/10 text-amber-400;
+    }
+
+    .alert-warning .db-grid__cell--status {
+        @apply text-amber-400 font-semibold;
+    }
+
+    .alert-critical {
+        @apply bg-rose-500/15 text-rose-400;
+    }
+
+    .alert-critical .db-grid__cell--status {
+        @apply text-rose-400 font-semibold;
+    }
+
+    /* Modern Form Inputs */
+    .replay-input {
+        @apply rounded-xl border border-slate-600/50 bg-slate-800/50 px-4 py-2.5 text-sm text-white placeholder-slate-500 shadow-inner transition-all duration-200 focus:border-indigo-500/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 disabled:bg-slate-800/30 disabled:text-slate-500 disabled:cursor-not-allowed;
+    }
+
+    .replay-checkbox {
+        @apply h-4 w-4 rounded border-slate-600 bg-slate-800/50 text-indigo-500 transition-colors focus:ring-2 focus:ring-indigo-500/20 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-40;
+    }
+
+    /* Status Pills */
+    .status-pill {
+        @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold;
+    }
+
+    .status-pill--live {
+        @apply bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/30;
+    }
+
+    .status-pill--live::before {
+        content: '';
+        @apply w-2 h-2 rounded-full bg-emerald-400 animate-pulse;
+    }
+
+    /* Card Database Label */
+    .db-card-header {
+        @apply flex items-center justify-between mb-4;
+    }
+
+    .db-card-title {
+        @apply text-lg font-semibold text-white;
+    }
+
+    /* Scrollbar Styling */
+    .db-grid__wrap::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .db-grid__wrap::-webkit-scrollbar-track {
+        @apply bg-slate-800/50 rounded-full;
+    }
+
+    .db-grid__wrap::-webkit-scrollbar-thumb {
+        @apply bg-slate-600/50 rounded-full hover:bg-slate-500/50;
+    }
+
+    /* Zebra Striping for Rows */
+    .db-grid tbody tr:nth-child(even) {
+        @apply bg-slate-800/20;
+    }
+
+    /* Empty state */
+    .empty-state {
+        @apply flex flex-col items-center justify-center py-12 text-center;
+    }
+
+    .empty-state-icon {
+        @apply w-16 h-16 text-slate-600 mb-4;
+    }
+
+    .empty-state-title {
+        @apply text-lg font-semibold text-slate-300 mb-2;
+    }
+
+    .empty-state-text {
+        @apply text-sm text-slate-500;
+    }
+}
