@@ -1,0 +1,132 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div
+    class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+    <div>
+      <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Database Health</h1>
+      <p class="text-slate-500 mt-1">Real-time monitoring of database infrastructure</p>
+    </div>
+
+    <div class="flex items-center gap-4 bg-white/50 p-1.5 rounded-xl border border-white/40 shadow-sm backdrop-blur-sm">
+      <div *ngIf="lastRefresh" class="hidden sm:block px-3 text-xs font-medium text-slate-500">
+        Updated <span class="text-slate-700">{{ lastRefresh | date:'mediumTime' }}</span>
+      </div>
+      <button (click)="reload()" [disabled]="isLoading"
+        class="group relative inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white transition-all duration-200 bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-70 disabled:cursor-not-allowed shadow-md shadow-indigo-500/20 overflow-hidden">
+
+        <span
+          class="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black"></span>
+
+        <div class="relative flex items-center gap-2">
+          <svg *ngIf="isLoading" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+          </svg>
+          <svg *ngIf="!isLoading" class="w-4 h-4 transition-transform group-hover:rotate-180 duration-500" fill="none"
+            stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          {{ isLoading ? 'Refreshing...' : 'Refresh Data' }}
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Alert -->
+  <div *ngIf="loadError"
+    class="animate-in fade-in slide-in-from-top-2 duration-300 rounded-lg p-4 border border-red-200 bg-red-50 text-red-700 flex items-start gap-3 shadow-sm">
+    <svg class="w-5 h-5 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+    </svg>
+    <div>
+      <h3 class="text-sm font-semibold">Failed to load data</h3>
+      <p class="text-sm mt-1 opacity-90">{{ loadError }}</p>
+    </div>
+  </div>
+
+  <!-- Cards Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    <div *ngFor="let card of dbCards; let i = index"
+      class="group bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col animate-in fade-in slide-in-from-bottom-4"
+      [style.animation-delay]="i * 50 + 'ms'">
+
+      <!-- Card Header -->
+      <div
+        class="px-5 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center group-hover:bg-slate-50 transition-colors">
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]"></div>
+          <h3 class="font-semibold text-slate-700">{{ card.name }}</h3>
+        </div>
+        <!-- Optional: Could add card-specific actions here -->
+      </div>
+
+      <!-- Card Table -->
+      <div class="overflow-x-auto flex-grow scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+        <table class="w-full text-sm text-left">
+          <thead
+            class="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-100 font-medium tracking-wider">
+            <tr>
+              <th *ngFor="let col of card.columns" class="px-5 py-3 whitespace-nowrap">
+                {{ formatHeader(col) }}
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr *ngFor="let row of card.rows" class="hover:bg-slate-50/80 transition-colors group/row">
+              <td *ngFor="let cell of row; let cIndex = index"
+                class="px-5 py-2.5 whitespace-nowrap text-slate-600 transition-colors" [ngClass]="[
+                    getColumnAlignmentClass(card.columns[cIndex]), 
+                    card.columns[cIndex].toLowerCase() === 'alertlevel' ? getAlertLevelClass(cell) : '',
+                    cIndex === 0 ? 'font-medium text-slate-900' : ''
+                  ]">
+                <!-- Special handling for AlertLevel is done via getAlertLevelClass which returns badge classes now -->
+                <!-- If it's NOT a badge (i.e. not empty class from helper), we just show text. 
+                     The helper returns container classes, so we need to wrap the content if it's alert level?
+                     Actually, the helper puts classes on TD. That's fine for bg colors but text alignment might be affected.
+                     Let's check logic. Helper returns 'bg-red-100 ...'. If applied to TD, the whole cell gets bg. 
+                     Ideally we want a span. But let's stick to TD class application for now as per previous logic, 
+                     but wait, I changed helper to return pill classes. Applying pill classes to TD works but might look odd if it fills the cell.
+                     Better to wrap in a span if it's AlertLevel.
+                -->
+                <ng-container *ngIf="card.columns[cIndex].toLowerCase() === 'alertlevel'; else normalCell">
+                  <span [class]="getAlertLevelClass(cell)">{{ formatCellValue(cell) }}</span>
+                </ng-container>
+                <ng-template #normalCell>
+                  {{ formatCellValue(cell) }}
+                </ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && dbCards.length === 0 && !loadError"
+    class="flex flex-col items-center justify-center py-20 text-center animate-in fade-in zoom-in duration-500">
+    <div class="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
+      <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+      </svg>
+    </div>
+    <h3 class="text-xl font-bold text-slate-900">No Monitoring Data</h3>
+    <p class="text-slate-500 mt-2 max-w-sm">
+      There is no database monitoring information available at the moment.
+    </p>
+    <button (click)="reload()"
+      class="mt-6 text-indigo-600 hover:text-indigo-800 font-medium text-sm flex items-center gap-1 transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+      Try Refreshing
+    </button>
+  </div>
+</div>
