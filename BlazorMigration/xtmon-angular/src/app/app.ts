@@ -10,7 +10,7 @@ import { NavMenuComponent } from './layout/nav-menu.component';
     <div class="app-shell">
       <aside class="sidebar-card w-72 flex-shrink-0">
         <div class="flex items-center gap-3 mb-8">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
             </svg>
@@ -52,7 +52,7 @@ import { NavMenuComponent } from './layout/nav-menu.component';
               Angular 21
             </span>
             <span class="inline-flex items-center gap-2 rounded-lg bg-slate-700/50 px-3 py-1.5 text-xs font-medium text-slate-300 ring-1 ring-slate-600/50">
-              <svg class="w-3.5 h-3.5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+              <svg class="w-3.5 h-3.5 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/>
               </svg>
               Minimal API

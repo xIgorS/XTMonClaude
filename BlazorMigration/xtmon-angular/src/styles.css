@@ -37,11 +37,11 @@
     }
 
     .nav-link-active {
-        @apply bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-white shadow-lg shadow-indigo-500/10 ring-1 ring-indigo-500/30;
+        @apply bg-gradient-to-r from-indigo-500/20 to-cyan-500/20 text-white shadow-lg shadow-indigo-500/10 ring-1 ring-indigo-500/30;
     }
 
     .primary-button {
-        @apply inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 transition-all duration-200 hover:from-indigo-600 hover:to-purple-700 hover:shadow-xl hover:shadow-indigo-500/40 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-lg;
+        @apply inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 transition-all duration-200 hover:from-indigo-600 hover:to-cyan-600 hover:shadow-xl hover:shadow-indigo-500/40 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-lg;
     }
 
     .secondary-button {

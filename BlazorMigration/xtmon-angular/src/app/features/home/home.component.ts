@@ -36,7 +36,7 @@ import { StatCardComponent } from '../../shared/stat-card.component';
       <div class="grid gap-4 md:grid-cols-2">
         <div class="stat-card group">
           <div class="flex items-start justify-between mb-4">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center group-hover:from-indigo-500/30 group-hover:to-purple-500/30 transition-colors">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-cyan-500/20 flex items-center justify-center group-hover:from-indigo-500/30 group-hover:to-cyan-500/30 transition-colors">
               <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
               </svg>
@@ -61,7 +61,7 @@ import { StatCardComponent } from '../../shared/stat-card.component';
         </div>
       </div>
 
-      <div class="rounded-2xl bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 border border-indigo-500/20 p-6">
+      <div class="rounded-2xl bg-gradient-to-r from-indigo-500/10 via-cyan-500/10 to-teal-500/10 border border-indigo-500/20 p-6">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <div class="flex items-center gap-2 mb-2">
